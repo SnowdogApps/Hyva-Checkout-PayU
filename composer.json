@@ -1,0 +1,16 @@
+{
+	"name": "snowdog/module-hyva-checkout-payu",
+	"description": "Hyva Checkout compatibility module for PayU",
+	"type": "magento2-module",
+	"require": {
+		"payu/magento24-payment-gateway": "*"
+	},
+	"autoload": {
+		"files": [
+			"src/registration.php"
+		],
+		"psr-4": {
+			"Snowdog\\Hyva\\Checkout\\PayU\\": "src"
+		}
+	}
+}

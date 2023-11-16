@@ -1,0 +1,32 @@
+<?php
+
+declare(strict_types=1);
+
+/** @var Template $block */
+/** @var PayU $magewire */
+
+/** @var Escaper $escaper */
+
+use Snowdog\Hyva\Checkout\PayU\Payment\Method\PayU;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+?>
+
+<div class="payu-payment">
+    <div class="payment__method">
+        <div class="method__list">
+            <?php foreach ($magewire->methods as $method): ?>
+                <div class="method__single">
+                    <div class="method__single--content <?php if ($method['value'] == $magewire->method): ?>_active<?php endif ?>"
+                         wire:click="$set('method', '<?= $method['value'] ?>')"
+                    >
+                    <span class="method__single__image">
+                        <img src="<?= $method['brandImageUrl'] ?>" alt="<?= $method['name'] ?>"/>
+                    </span>
+                    </div>
+                </div>
+            <?php endforeach ?>
+        </div>
+    </div>
+</div>

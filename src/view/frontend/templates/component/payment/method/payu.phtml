@@ -13,20 +13,14 @@ use Magento\Framework\View\Element\Template;
 
 ?>
 
-<div class="payu-payment">
-    <div class="payment__method">
-        <div class="method__list">
-            <?php foreach ($magewire->methods as $method): ?>
-                <div class="method__single">
-                    <div class="method__single--content <?php if ($method['value'] == $magewire->method): ?>_active<?php endif ?>"
-                         wire:click="$set('method', '<?= $method['value'] ?>')"
-                    >
-                    <span class="method__single__image">
-                        <img src="<?= $method['brandImageUrl'] ?>" alt="<?= $method['name'] ?>"/>
-                    </span>
-                    </div>
-                </div>
-            <?php endforeach ?>
-        </div>
-    </div>
+
+<div class="grid grid-cols-5">
+    <?php foreach ($magewire->methods as $method): ?>
+        <button type="button"
+                class="w-36 h-12 m-2 p-2 bg-contain bg-center bg-no-repeat hover:bg-container-darker <?php if ($method['value'] == $magewire->method): ?>border-2<?php endif ?>"
+                wire:click="$set('method', '<?= $method['value'] ?>')"
+                style="background-image: url('<?= $method['brandImageUrl'] ?>')" title="<?= $method['name'] ?>"
+        >
+        </button>
+    <?php endforeach ?>
 </div>

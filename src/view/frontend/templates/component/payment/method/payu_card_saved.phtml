@@ -1,0 +1,32 @@
+<?php
+
+declare(strict_types=1);
+
+/** @var Template $block */
+/** @var PayUCard $magewire */
+
+/** @var Escaper $escaper */
+
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+use Snowdog\Hyva\Checkout\PayU\Payment\Method\PayUCard;
+
+?>
+
+<div class="container">
+    <?php foreach ($magewire->methods as $card): ?>
+        <button type="button"
+                class="w-full flex flex-row m-2 p-2 <?php if ($card['value'] == $magewire->method): ?>border-2<?php endif ?>"
+                wire:click="selectSaved('<?= $card['value'] ?>')"
+        >
+           <span class="w-24 h-8 m-2 p-2 bg-contain bg-center bg-no-repeat"
+                      style="background-image: url('<?= $card['brandImageUrl'] ?>')" title="<?= $card['cardBrand'] ?>">
+            </span>
+            <span class="h-8 m-2 p-2"><?= $card['cardNumberMasked'] ?></span>
+        </button>
+    <?php endforeach ?>
+
+    <?php if (count($magewire->methods) != 0 && !$magewire->showCardForm): ?>
+        <button class="m-4 btn btn-primary" wire:click="showForm()"><?= __('Use new card') ?></button>
+    <?php endif ?>
+</div>

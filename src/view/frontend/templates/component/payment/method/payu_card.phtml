@@ -1,0 +1,59 @@
+<div id="payment_payu_card_form" hidden="hidden">
+    <div class="payu-card-form-container">
+        <div class="payu-card-container">
+            <div class="aside"><?= __('Card Number') ?></div>
+            <div class="payu-card-form" id="payu-card-number"></div>
+
+            <div class="card-details clearfix">
+                <div class="expiration">
+                    <div class="aside"><?= __('Valid thru') ?></div>
+                    <div class="payu-card-form" id="payu-card-date"></div>
+                </div>
+
+                <div class="cvv">
+                    <div class="aside"><?= __('CVV') ?></div>
+                    <div class="payu-card-form" id="payu-card-cvv"></div>
+                </div>
+            </div>
+        </div>
+        <!-- ko if: secureForm.storeCard -->
+        <div class="choice field payu-store-card">
+            <input type="checkbox" class="checkbox" id="payu_payment-store-card"/>
+            <label class="label" for="payu_payment-store-card">
+                <span><?= __('Store card for future payments') ?></span>
+            </label>
+            <p class="payu-text">
+                <?= __('By saving card data, I accept') ?> <a
+                        href="https://static.payu.com/sites/terms/files/TERMS_AND_CONDITIONS_OF_PROVIDING_PAYU_SERVICE.pdf"
+                        target="_blank"><?= __('the Terms and Conditions') ?></a>
+                <?= __('and I want to use it for further payments.') ?>
+            </p>
+        </div>
+        <!-- /ko -->
+
+    </div>
+</div>
+<script>
+    'use strict';
+
+    (function () {
+        window.addEventListener('checkout:payment:method-activate', async event => {
+            let element = document.getElementById('payment_payu_card_form');
+            if (event.detail.method !== 'payu_gateway_card') {
+                element.hidden = true;
+            } else {
+                let component = Magewire.find('checkout.payment.method.payu_gateway_card')
+                element.hidden = !component.get('showCardForm')
+            }
+        }, {})
+        window.addEventListener('payu_card:toggle:form', async event => {
+            let element = document.getElementById('payment_payu_card_form');
+            let component = Magewire.find('checkout.payment.method.payu_gateway_card')
+            if (!component) {
+                element.hidden = true;
+            } else {
+                element.hidden = !component.get('showCardForm')
+            }
+        }, {})
+    })();
+</script>

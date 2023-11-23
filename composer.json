@@ -3,7 +3,8 @@
 	"description": "Hyva Checkout compatibility module for PayU",
 	"type": "magento2-module",
 	"require": {
-		"payu/magento24-payment-gateway": "*"
+		"payu/magento24-payment-gateway": "*",
+		"hyva-themes/magento2-compat-module-fallback": "*"
 	},
 	"autoload": {
 		"files": [

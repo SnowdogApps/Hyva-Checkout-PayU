@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<page
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd"
+>
+    <referenceContainer name="magewire.plugin.scripts">
+        <block
+                name="hyva-checkout.payu-cards"
+                after="-"
+                template="Snowdog_HyvaCheckoutPayU::payu-script.phtml"
+        >
+            <arguments>
+                <argument name="view_model" xsi:type="object">
+                    Snowdog\Hyva\Checkout\PayU\Block\Script
+                </argument>
+            </arguments>
+        </block>
+    </referenceContainer>
+</page>

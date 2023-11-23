@@ -41,22 +41,6 @@ class PayU extends Component implements EvaluationInterface
         }
     }
 
-    public function updated($value, $name)
-    {
-        echo 'AAAA';
-        $quote = $this->sessionCheckout->getQuote();
-        $quote->getPayment()->setAdditionalInformation(PayUConfigInterface::PAYU_METHOD_CODE, $this->method);
-        $quote->getPayment()->setAdditionalInformation(
-            PayUConfigInterface::PAYU_METHOD_TYPE_CODE,
-            PayUConfigInterface::PAYU_BANK_TRANSFER_KEY
-        );
-        $this->quoteRepository->save($quote);
-
-        echo 'dupa';
-
-        return $value;
-    }
-
     public function evaluateCompletion(EvaluationResultFactory $resultFactory): EvaluationResultInterface
     {
         if ($this->sessionCheckout->getQuote()->getPayment()->getMethod() != 'payu_gateway') {

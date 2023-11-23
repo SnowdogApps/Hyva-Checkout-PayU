@@ -11,7 +11,32 @@
                     <argument name="magewire" xsi:type="object">
                         Snowdog\Hyva\Checkout\PayU\Payment\Method\PayU
                     </argument>
+                    <argument name="metadata" xsi:type="array">
+                        <item name="title" xsi:type="string">Test</item>
+                        <item name="subtitle" xsi:type="string" translate="true">
+                            Pay with PayU
+                        </item>
+                    </argument>
                 </arguments>
+            </block>
+            <block name="checkout.payment.method.payu_gateway_card"
+                   as="payu_gateway_card"
+                   template="Snowdog_HyvaCheckoutPayU::component/payment/method/payu_card_saved.phtml">
+                <arguments>
+                    <argument name="magewire" xsi:type="object">
+                        Snowdog\Hyva\Checkout\PayU\Payment\Method\PayUCard
+                    </argument>
+                    <argument name="metadata" xsi:type="array">
+                        <item name="subtitle" xsi:type="string" translate="true">
+                            Pay with a card
+                        </item>
+                    </argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+        <referenceBlock name="checkout.payment.methods.after">
+            <block name="checkout.payment.method.payu_gateway_card.form"
+                   template="Snowdog_HyvaCheckoutPayU::component/payment/method/payu_card.phtml">
             </block>
         </referenceBlock>
     </body>

@@ -16,7 +16,7 @@
     <type name="Hyva\CompatModuleFallback\Model\CompatModuleRegistry">
         <arguments>
             <argument name="compatModules" xsi:type="array">
-                <item name="hyva-magento2-snowdog-tpay" xsi:type="array">
+                <item name="hyva-magento2-snowdog-payu" xsi:type="array">
                     <item name="original_module" xsi:type="string">PayU_PaymentGateway</item>
                     <item name="compat_module" xsi:type="string">Snowdog_HyvaCheckoutPayU</item>
                 </item>

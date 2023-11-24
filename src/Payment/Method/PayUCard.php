@@ -2,9 +2,6 @@
 
 namespace Snowdog\Hyva\Checkout\PayU\Payment\Method;
 
-use Hyva\Checkout\Model\Magewire\Component\EvaluationInterface;
-use Hyva\Checkout\Model\Magewire\Component\EvaluationResultFactory;
-use Hyva\Checkout\Model\Magewire\Component\EvaluationResultInterface;
 use Magento\Payment\Gateway\Config\Config as GatewayConfig;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magewirephp\Magewire\Component;
@@ -13,7 +10,7 @@ use PayU\PaymentGateway\Model\GetUserPayMethods;
 use Magento\Checkout\Model\Session as SessionCheckout;
 use PayU\PaymentGateway\Model\Ui\CardConfigProvider;
 
-class PayUCard extends Component implements EvaluationInterface
+class PayUCard extends Component
 {
     public string $method = '';
 
@@ -41,25 +38,49 @@ class PayUCard extends Component implements EvaluationInterface
         ) {
             $this->method = $data[PayUConfigInterface::PAYU_METHOD_CODE];
         }
-        $methods = $this->getMethods->execute('test@example.com', 2);
-        foreach ($methods['cardTokens'] as $method) {
-            $this->methods[] = [
-                'value' => $method->value,
-                'brandImageUrl' => $method->brandImageUrl,
-                'cardBrand' => $method->cardBrand,
-                'cardNumberMasked' => $method->cardNumberMasked,
-            ];
+        if (
+            isset($data[PayUConfigInterface::PAYU_METHOD_CODE], $data[PayUConfigInterface::PAYU_METHOD_TYPE_CODE])
+            && $data[PayUConfigInterface::PAYU_METHOD_TYPE_CODE] == PayUConfigInterface::PAYU_BANK_TRANSFER_KEY
+            && $data[PayUConfigInterface::PAYU_METHOD_CODE] == 'c'
+        ) {
+            $this->method = 'c';
         }
-        if (count($this->methods) == 0) {
+        $methods = $this->getMethods->execute('test@example.com', 2);
+        if (isset($methods['cardTokens'])) {
+            foreach ($methods['cardTokens'] as $method) {
+                $this->methods[] = [
+                    'value' => $method->value,
+                    'brandImageUrl' => $method->brandImageUrl,
+                    'cardBrand' => $method->cardBrand,
+                    'cardNumberMasked' => $method->cardNumberMasked,
+                ];
+            }
+        }
+        if (count($this->methods) == 0 || $this->method == 'c') {
             $this->showCardForm = true;
+            $this->method = 'c';
+            $quote = $this->sessionCheckout->getQuote();
+            $quote->getPayment()->setAdditionalInformation(PayUConfigInterface::PAYU_METHOD_CODE, 'c');
+            $quote->getPayment()->setAdditionalInformation(
+                PayUConfigInterface::PAYU_METHOD_TYPE_CODE,
+                PayUConfigInterface::PAYU_BANK_TRANSFER_KEY,
+            );
+            $this->quoteRepository->save($quote);
         }
     }
 
     public function showForm()
     {
-        $this->method = '';
+        $this->method = 'c';
         $this->showCardForm = true;
         $this->dispatchBrowserEvent('payu_card:toggle:form', true);
+        $quote = $this->sessionCheckout->getQuote();
+        $quote->getPayment()->setAdditionalInformation(PayUConfigInterface::PAYU_METHOD_CODE, 'c');
+        $quote->getPayment()->setAdditionalInformation(
+            PayUConfigInterface::PAYU_METHOD_TYPE_CODE,
+            PayUConfigInterface::PAYU_BANK_TRANSFER_KEY,
+        );
+        $this->quoteRepository->save($quote);
     }
 
     public function selectSaved(string $token)
@@ -67,10 +88,6 @@ class PayUCard extends Component implements EvaluationInterface
         $this->method = $token;
         $this->showCardForm = false;
         $this->dispatchBrowserEvent('payu_card:toggle:form', false);
-    }
-
-    public function token(string $token)
-    {
         $quote = $this->sessionCheckout->getQuote();
         $quote->getPayment()->setAdditionalInformation(PayUConfigInterface::PAYU_METHOD_CODE, $token);
         $quote->getPayment()->setAdditionalInformation(
@@ -80,30 +97,15 @@ class PayUCard extends Component implements EvaluationInterface
         $this->quoteRepository->save($quote);
     }
 
-    public function evaluateCompletion(EvaluationResultFactory $resultFactory): EvaluationResultInterface
+    public function token(string $token)
     {
-        return $resultFactory->createSuccess();
-
-        if ($this->sessionCheckout->getQuote()->getPayment()->getMethod() != 'payu_gateway_card') {
-            return $resultFactory->createSuccess();
-        }
-
-        if (empty($this->method)) {
-            return $resultFactory->createBlocking(__('Payment method not selected'));
-        }
-
-        if (!$this->acceptTos) {
-            return $resultFactory->createBlocking(__('TOS not accepted'));
-        }
-
+        $this->method = $token;
         $quote = $this->sessionCheckout->getQuote();
-        $quote->getPayment()->setAdditionalInformation(PayUConfigInterface::PAYU_METHOD_CODE, $this->method);
+        $quote->getPayment()->setAdditionalInformation(PayUConfigInterface::PAYU_METHOD_CODE, $token);
         $quote->getPayment()->setAdditionalInformation(
             PayUConfigInterface::PAYU_METHOD_TYPE_CODE,
-            PayUConfigInterface::PAYU_BANK_TRANSFER_KEY
+            PayUConfigInterface::PAYU_CC_TRANSFER_KEY,
         );
         $this->quoteRepository->save($quote);
-
-        return $resultFactory->createSuccess();
     }
 }

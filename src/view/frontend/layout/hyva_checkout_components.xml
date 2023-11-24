@@ -37,6 +37,11 @@
         <referenceBlock name="checkout.payment.methods.after">
             <block name="checkout.payment.method.payu_gateway_card.form"
                    template="Snowdog_HyvaCheckoutPayU::component/payment/method/payu_card.phtml">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">
+                        Snowdog\Hyva\Checkout\PayU\Block\Script
+                    </argument>
+                </arguments>
             </block>
         </referenceBlock>
     </body>

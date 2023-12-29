@@ -2,6 +2,9 @@
 
 namespace Snowdog\Hyva\Checkout\PayU\Payment\Method;
 
+use Hyva\Checkout\Model\Magewire\Component\EvaluationInterface;
+use Hyva\Checkout\Model\Magewire\Component\EvaluationResultFactory;
+use Hyva\Checkout\Model\Magewire\Component\EvaluationResultInterface;
 use Magento\Payment\Gateway\Config\Config as GatewayConfig;
 use Magento\Quote\Api\CartRepositoryInterface;
 use Magewirephp\Magewire\Component;
@@ -10,7 +13,7 @@ use PayU\PaymentGateway\Model\GetUserPayMethods;
 use Magento\Checkout\Model\Session as SessionCheckout;
 use PayU\PaymentGateway\Model\Ui\CardConfigProvider;
 
-class PayUCard extends Component
+class PayUCard extends Component implements EvaluationInterface
 {
     public string $method = '';
 
@@ -19,6 +22,8 @@ class PayUCard extends Component
     public bool $showCardForm = false;
 
     public array $methods = [];
+
+    private string $failureMessage = '';
 
     public function __construct(
         private readonly GetUserPayMethods       $getMethods,
@@ -107,5 +112,19 @@ class PayUCard extends Component
             PayUConfigInterface::PAYU_CC_TRANSFER_KEY,
         );
         $this->quoteRepository->save($quote);
+    }
+
+    public function failure(string $message)
+    {
+        $this->failureMessage = $message;
+    }
+
+    public function evaluateCompletion(EvaluationResultFactory $resultFactory): EvaluationResultInterface
+    {
+        if (empty($this->failureMessage)) {
+            return $resultFactory->createSuccess();
+        }
+
+        return $resultFactory->createErrorMessage($this->failureMessage);
     }
 }

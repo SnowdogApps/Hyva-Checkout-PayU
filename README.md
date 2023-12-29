@@ -26,4 +26,3 @@ See original module at [PayU-EMEA/plugin_magento_24](https://github.com/PayU-EME
 
 * Credit card form (hosted fields) is not part of payment method block, but it is added after block with payment methods. 
 For visual effect You want to have PayU Cards payment method as last payment method (so there is nothing in between payment block and card form)
-* If Credit card tokenization fails on checkout page customer is redirected to PayU to see credit card form there.

@@ -65,7 +65,14 @@ $viewModel = $block->getViewModel();
                             if (result.status === 'SUCCESS') {
                                 return component.token(result.body.token);
                             }
-                            return false;
+                            let message = [];
+                            result.error.messages.forEach(function (error) {
+                                message.push(error.message);
+                            })
+                            return component.failure(message.join('; '));
+                        },
+                        function (reason) {
+                            return component.failure(reason)
                         }
                     );
                 }

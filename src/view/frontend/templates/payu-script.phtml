@@ -53,7 +53,10 @@ $viewModel = $block->getViewModel();
             secureFormCvv.render(secureFormOptions.elementFormCvv);
 
             hyvaCheckout.navigation.addTask(() => {
-                let component = Magewire.find('checkout.payment.method.payu_gateway_card');
+                let component = false;
+                try {
+                    component = Magewire.find('checkout.payment.method.payu_gateway_card');
+                } catch(TypeError) {}
                 if (component && component.get('method') === 'c') {
                     const save = document.getElementById('payu_payment-store-card');
                     let method = 'SINGLE';
